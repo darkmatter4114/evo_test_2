@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+<!--Login-->
+<div class="container py-5" style=" display: flex;
+    justify-content: center;
+    height: 25vh;
+    align-items: flex-end;">
+    <form action="/" method="POST" class="post-form" style="display: flex;
+                                                flex-direction: column;
+                                                align-items: center;">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-primary" value="Привітатись">
+    </form>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12" style="display: flex;
+                                    flex-direction: column;
+                                    justify-content: center;
+                                    align-items: center;">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible" role="alert" style="margin-bottom: 0px;">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12" style="display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    padding-top: 30px;">
+            <a class="start" id="all-link">Всі користувачі</a>
+
+            <ul id="list-all" style="list-style: none;
+    padding-left: 0px;">
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+
+let ul = document.getElementById('list-all');
+let element  = document.createElement('li');
+let click = document.getElementById('all-link');
+let list = [];
+
+click.addEventListener('click', () => {
+if (document.getElementById("all-link").classList.contains('start') ){
+             fetch('all/')
+              .then(response => response.text())
+              .then(response => {
+                    list = response.split(' ');
+                    list = list.slice(0,-1);
+                    list.forEach(item => {
+                        element  = document.createElement('li');
+                        ul.appendChild(element);
+                        element.innerText = item;
+                        element.classList.add('sp')
+                    });
+                });
+document.getElementById("all-link").classList.remove('start');
+document.getElementById("all-link").classList.add('show');
+}else{
+document.getElementById("all-link").classList.remove('show');
+document.getElementById("all-link").classList.add('start');
+
+document.querySelectorAll('.sp').forEach(item=> item.remove());
+};
+
+             });
+
+if(document.querySelector('.alert.info')){
+    setTimeout(() => {
+    document.querySelector('.alert.info').remove()}, 5000);
+};
+
+
+</script>
+{% endblock %}

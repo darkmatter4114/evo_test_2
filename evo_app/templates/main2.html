@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+<!--Login-->
+<div class="container py-5" style=" display: flex;
+    justify-content: center;
+    height: 40vh;
+    align-items: flex-end;">
+    <form  method="POST" class="post-form" style="display: flex;
+                                                flex-direction: column;
+                                                align-items: center;">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-primary" value="Привітатись">
+    </form>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12" style="display: flex;
+                                    flex-direction: column;
+                                    justify-content: center;
+                                    align-items: center;">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible" role="alert" style="margin-bottom: 0px;">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12" style="display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    padding-top: 30px;">
+            <a class="start" id="all-link">Всі користувачі</a>
+
+            <ul id="list-all" style="list-style: none;
+    padding-left: 0px;">
+                <li id="list-row" style="visibility: hidden;" >
+                    <span id="name">Ім'я</span>
+                    <span id="lastname">Фамілія</span>
+                    <span id="email">Емейл</span>
+                    <span id="data">Дата реєстрації</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+
+let ul = document.getElementById('list-all');
+let element  = document.createElement('li');
+let click = document.getElementById('all-link');
+click.addEventListener('click', () => {
+if (document.getElementById("all-link").classList.contains('start') ){
+             fetch('allV2/')
+              .then(response => response.json())
+              .then(response => {
+                    list = JSON.parse(JSON.stringify(response));
+                    console.log(list[1].date_first);
+                    for (let i = 0;i<Object.keys(list).length; i++){
+                        element  = document.createElement('li');
+
+                        sp1 = document.createElement("span");
+                        sp1.setAttribute("id","name");
+                        sp1.innerHTML = list[i].name;
+                        sp1.classList.add('sp');
+                        element.appendChild(sp1);
+
+                        sp2 = document.createElement("span");
+                        sp2.setAttribute("id","lastName");
+                        sp2.innerHTML = list[i].lastName;
+                        sp2.classList.add('sp');
+                        element.appendChild(sp2);
+
+                        sp3 = document.createElement("span");
+                        sp3.setAttribute("id","email");
+                        sp3.innerHTML = list[i].email;
+                        sp3.classList.add('sp');
+                        element.appendChild(sp3);
+
+                        sp4 = document.createElement("span");
+                        sp4.setAttribute("id","date_first");
+                         d = new Date(list[i].date_first);
+                        sp4.innerHTML = d.toLocaleString();
+                        sp4.classList.add('sp');
+                        element.appendChild(sp4);
+
+                        element.setAttribute("id","list-row-d");
+                        element.classList.add('spt');
+                        ul.appendChild(element);
+                    }
+                });
+document.getElementById("all-link").classList.remove('start');
+document.getElementById("all-link").classList.add('show');
+
+document.getElementById('list-row').style.visibility = "visible";
+}else{
+document.getElementById("all-link").classList.remove('show');
+document.getElementById("all-link").classList.add('start');
+
+
+document.querySelectorAll('.spt').forEach(item=> item.remove());
+document.getElementById('list-row').style.visibility = "hidden";
+};
+
+             });
+
+if(document.querySelector('.alert.info')){
+    setTimeout(() => {
+    document.querySelector('.alert.info').remove()}, 5000);
+};
+
+
+</script>
+
+<style>
+    #list-row, #list-row-d{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    #list-row>span, .sp{
+        width: 130px;
+        text-align: center;
+        overflow-wrap: break-word;
+    }
+</style>
+{% endblock %}
