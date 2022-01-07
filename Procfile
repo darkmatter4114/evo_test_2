@@ -1,0 +1,1 @@
+web: gunicorn --pythonpath evo_app evo_app.wsgi
