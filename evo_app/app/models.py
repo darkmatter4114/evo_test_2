@@ -3,7 +3,6 @@ from django.db import models
 
 
 class User(models.Model):
-    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
 
 
@@ -13,7 +12,6 @@ class Meta:
 
 
 class FullUser(models.Model):
-    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
     lastName = models.CharField(max_length=30)
     email = models.EmailField(max_length=30)
