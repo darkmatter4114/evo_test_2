@@ -1,1 +1,1 @@
-web: gunicorn --pythonpath evo_app evo_app.wsgi
+web: gunicorn --pythonpath evo-hi-app evo_app.wsgi
